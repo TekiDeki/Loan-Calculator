@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tekideki.github.io/Loan-Calculator/sitemap.xml

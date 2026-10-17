@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Loan &amp; Amortization Calculator · TekiDeki</title>
+<meta name="description" content="Calculate monthly loan payments, total interest, payoff date and a full amortization schedule. Extra payments, fees, CSV export. Offline, private, nothing uploaded.">
+<meta name="author" content="Kristian Mario Mišković (TekiDeki)">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#0f766e" id="themeColor">
+<link rel="canonical" href="https://tekideki.github.io/Loan-Calculator/" id="canonical">
+<link rel="alternate" hreflang="en" href="https://tekideki.github.io/Loan-Calculator/">
+<link rel="alternate" hreflang="ro" href="https://tekideki.github.io/Loan-Calculator/?lang=ro">
+<link rel="alternate" hreflang="sr-Latn" href="https://tekideki.github.io/Loan-Calculator/?lang=sr-Latn">
+<link rel="alternate" hreflang="sr-Cyrl" href="https://tekideki.github.io/Loan-Calculator/?lang=sr-Cyrl">
+<link rel="alternate" hreflang="x-default" href="https://tekideki.github.io/Loan-Calculator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TekiDeki">
+<meta property="og:title" content="Loan &amp; Amortization Calculator · TekiDeki">
+<meta property="og:description" content="Monthly payment, total interest, payoff date and full repayment schedule. Runs in your browser.">
+<meta property="og:url" content="https://tekideki.github.io/Loan-Calculator/">
+<meta property="og:locale" content="en_GB" id="ogLocale">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Loan &amp; Amortization Calculator · TekiDeki">
+<meta name="twitter:description" content="Monthly payment, total interest, payoff date and full repayment schedule. Runs in your browser.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Loans">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<script type="application/ld+json" id="appSchema">{"@context":"https://schema.org","@type":"WebApplication","name":"Loan & Amortization Calculator","applicationCategory":"FinanceApplication","operatingSystem":"Any modern browser","description":"Calculate monthly loan payments, total interest, payoff date and a full amortization schedule. Runs locally.","url":"https://tekideki.github.io/Loan-Calculator/","inLanguage":["en","ro","sr-Latn","sr-Cyrl"],"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"author":{"@type":"Person","name":"Kristian Mario Mišković","url":"https://github.com/TekiDeki"}}</script>
+<style>
+:root{--bg:#f4f8f7;--card:#ffffff;--text:#13211f;--muted:#4d6461;--line:#d4e2df;--accent:#0f766e;--accent-2:#0b5b55;--danger:#b42318;--chart-now:#0f766e;--chart-base:#8a9a98;--input:#ffffff;--shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.06)}
+[data-theme="dark"]{--bg:#0d1920;--card:#14262d;--text:#e8f3f1;--muted:#a9c2bd;--line:#2a4149;--accent:#2dd4bf;--accent-2:#5eead4;--danger:#fda29b;--chart-now:#2dd4bf;--chart-base:#7f9a95;--input:#0f1e24;--shadow:none}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif}
+body{min-height:100vh;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
+.wrap{max-width:1120px;margin:0 auto;padding:16px 0 40px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:8px 0 16px}
+.brand h1{font-size:1.45rem;margin:0;line-height:1.2}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:.95rem;max-width:62ch}
+.controls{display:flex;gap:8px;align-items:center}
+select,button,input{font:inherit}
+.lang-control,.icon-button,.btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:8px 12px;cursor:pointer;min-height:40px}
+.icon-button{width:40px;padding:0;display:grid;place-items:center}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:hover,.lang-control:hover,.icon-button:hover{border-color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.grid>*,.card{min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px}
+.card h2{font-size:1.05rem;margin:0 0 14px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label,.field .label{font-size:.92rem;color:var(--muted)}
+.input,.field input,.field select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input);color:var(--text);min-height:42px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:.85rem;color:var(--muted);margin:-6px 0 12px}
+.error{color:var(--danger);font-size:.92rem;min-height:1.4em;margin:0 0 10px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.metric{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.metric .k{font-size:.85rem;color:var(--muted)}
+.metric .v{font-size:1.3rem;font-weight:700;margin-top:4px;word-break:break-word}
+.metric.hero{grid-column:span 2;border-color:var(--accent)}
+.metric.hero .v{font-size:1.7rem;color:var(--accent)}
+.saving{margin-top:12px;font-size:.95rem;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chart{width:100%;height:auto;display:block;margin-top:8px}
+.chart text{fill:var(--muted);font-size:12px}
+.chart .now{fill:none;stroke:var(--chart-now);stroke-width:3}
+.chart .base{fill:none;stroke:var(--chart-base);stroke-width:2;stroke-dasharray:6 5}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.88rem;color:var(--muted);margin-top:6px}
+.legend span::before{content:"";display:inline-block;width:14px;height:3px;margin-right:6px;vertical-align:middle;background:var(--chart-now)}
+.legend .b::before{background:var(--chart-base)}
+.table-wrap{max-width:100%;max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:12px;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.92rem}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{position:sticky;top:0;background:var(--card);font-weight:600;color:var(--muted)}
+td:first-child,th:first-child,td:nth-child(2),th:nth-child(2){text-align:left}
+.foot{margin-top:22px;color:var(--muted);font-size:.9rem;display:grid;gap:8px}
+.foot a{color:var(--accent)}
+.status{min-height:1.4em;font-size:.92rem;color:var(--muted)}
+.status.error{color:var(--danger)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media print{header .controls,.actions,.foot{display:none}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1 data-i18n="h1">Loan &amp; amortization calculator</h1>
+      <p data-i18n="subtitle">Monthly payment, total interest and a full repayment schedule. Your figures stay in this browser.</p>
+    </div>
+    <div class="controls">
+      <label class="sr-only" for="langSelect" data-i18n="language">Language</label>
+      <select id="langSelect" class="lang-control">
+        <option value="en">EN · English</option>
+        <option value="ro">RO · Română</option>
+        <option value="sr-latn">SR · Srpski</option>
+        <option value="sr-cyrl">СР · Српски</option>
+      </select>
+      <button id="themeToggle" class="icon-button" type="button" aria-label="Toggle light/dark theme" data-i18n-aria="theme">🌙</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card" aria-labelledby="formTitle">
+      <h2 id="formTitle" data-i18n="formTitle">Loan details</h2>
+      <form id="loanForm" novalidate onsubmit="return false">
+        <div class="field">
+          <label for="amount" data-i18n="amount">Loan amount</label>
+          <input id="amount" type="number" inputmode="decimal" min="0" step="0.01" value="100000">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="rate" data-i18n="rate">Annual interest rate (%)</label>
+            <input id="rate" type="number" inputmode="decimal" min="0" max="100" step="0.01" value="6">
+          </div>
+          <div class="field">
+            <label for="currency" data-i18n="currency">Currency</label>
+            <select id="currency">
+              <option value="RSD">RSD</option>
+              <option value="RON">RON</option>
+              <option value="EUR">EUR</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="termValue" data-i18n="term">Loan term</label>
+            <input id="termValue" type="number" inputmode="numeric" min="1" step="1" value="30">
+          </div>
+          <div class="field">
+            <label class="sr-only" for="termUnit" data-i18n="term">Loan term</label>
+            <select id="termUnit">
+              <option value="years" data-i18n="termYears">years</option>
+              <option value="months" data-i18n="termMonths">months</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="start" data-i18n="start">Start date</label>
+          <input id="start" type="date">
+          <div class="hint" data-i18n="startHint">The first payment is due one month after this date.</div>
+        </div>
+        <div class="field">
+          <label for="extra" data-i18n="extra">Extra monthly payment (optional)</label>
+          <input id="extra" type="number" inputmode="decimal" min="0" step="0.01" value="0">
+        </div>
+        <div class="field">
+          <label for="fee" data-i18n="fee">One-time fees (optional)</label>
+          <input id="fee" type="number" inputmode="decimal" min="0" step="0.01" value="0">
+        </div>
+        <p class="error" id="formError" role="alert"></p>
+        <div class="actions">
+          <button class="btn" id="resetBtn" type="button" data-i18n="reset">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section aria-live="polite" aria-labelledby="resultsTitle">
+      <div class="card">
+        <h2 id="resultsTitle" data-i18n="resultsTitle">Results</h2>
+        <div class="metrics">
+          <div class="metric hero"><div class="k" data-i18n="monthly">Monthly payment</div><div class="v" id="outMonthly">–</div></div>
+          <div class="metric"><div class="k" data-i18n="totalInterest">Total interest</div><div class="v" id="outInterest">–</div></div>
+          <div class="metric"><div class="k" data-i18n="totalPaid">Total repaid</div><div class="v" id="outPaid">–</div></div>
+          <div class="metric"><div class="k" data-i18n="totalCost">Total cost (incl. fees)</div><div class="v" id="outCost">–</div></div>
+          <div class="metric"><div class="k" data-i18n="payoff">Final payment date</div><div class="v" id="outPayoff">–</div></div>
+          <div class="metric"><div class="k" data-i18n="payments">Number of payments</div><div class="v" id="outCount">–</div></div>
+        </div>
+        <p class="saving" id="outSaving" data-i18n="noSaving">Add an extra payment to see savings.</p>
+        <div class="actions">
+          <button class="btn" id="copyBtn" type="button" data-i18n="copy">Copy summary</button>
+          <button class="btn primary" id="csvBtn" type="button" data-i18n="exportCsv">Download CSV</button>
+        </div>
+        <p class="status" id="status" role="status"></p>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h2 data-i18n="chartTitle">Remaining balance</h2>
+        <svg class="chart" id="chart" viewBox="0 0 640 260" role="img" aria-labelledby="chartTitleSvg">
+          <title id="chartTitleSvg" data-i18n="chartTitle">Remaining balance</title>
+          <line x1="48" y1="210" x2="630" y2="210" stroke="currentColor" opacity=".25"></line>
+          <line x1="48" y1="10" x2="48" y2="210" stroke="currentColor" opacity=".25"></line>
+          <polyline id="lineBase" class="base" points=""></polyline>
+          <polyline id="lineNow" class="now" points=""></polyline>
+          <text id="chartMax" x="52" y="22"></text>
+          <text id="chartEnd" x="630" y="232" text-anchor="end"></text>
+        </svg>
+        <div class="legend"><span data-i18n="chartNow">With your payments</span><span class="b" data-i18n="chartBase">Without extra payments</span></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h2 data-i18n="scheduleTitle">Repayment schedule</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="colNo">No.</th><th data-i18n="colDate">Date</th><th data-i18n="colPayment">Payment</th>
+                <th data-i18n="colExtra">Extra</th><th data-i18n="colPrincipal">Principal</th><th data-i18n="colInterest">Interest</th><th data-i18n="colBalance">Balance</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p data-i18n="disclaimer">Estimate only. Banks may use different day counts, rounding, insurance or fees. Confirm the final schedule with your lender.</p>
+    <p data-i18n="privacy">No account, no tracking, no upload. Only language, theme and currency are saved on this device.</p>
+    <p>
+      <a href="https://github.com/TekiDeki/Loan-Calculator" data-i18n="source">Source code</a> ·
+      <a href="https://paypal.me/TekiDeki" data-i18n="donate">☕ Buy me a coffee?</a> ·
+      <a href="https://freehtml.dev/">freeHTML.dev</a> · Apache-2.0
+    </p>
+  </footer>
+</div>
+
+<script>
+const I18N = {
+  "en": {
+    "title": "Loan & Amortization Calculator · TekiDeki",
+    "description": "Calculate monthly loan payments, total interest, payoff date and a full amortization schedule. Extra payments, fees, CSV export. Offline, private, nothing uploaded.",
+    "h1": "Loan & amortization calculator",
+    "subtitle": "Monthly payment, total interest and a full repayment schedule. Your figures stay in this browser.",
+    "language": "Language",
+    "theme": "Toggle light/dark theme",
+    "formTitle": "Loan details",
+    "amount": "Loan amount",
+    "rate": "Annual interest rate (%)",
+    "currency": "Currency",
+    "term": "Loan term",
+    "termYears": "years",
+    "termMonths": "months",
+    "start": "Start date",
+    "startHint": "The first payment is due one month after this date.",
+    "extra": "Extra monthly payment (optional)",
+    "fee": "One-time fees (optional)",
+    "reset": "Reset",
+    "resultsTitle": "Results",
+    "monthly": "Monthly payment",
+    "totalInterest": "Total interest",
+    "totalPaid": "Total repaid",
+    "totalCost": "Total cost (incl. fees)",
+    "payoff": "Final payment date",
+    "payments": "Number of payments",
+    "savedHead": "Saved with extra payments",
+    "savedInterest": "{i} less interest",
+    "savedMonths": "{n} months sooner",
+    "noSaving": "Add an extra payment to see savings.",
+    "copy": "Copy summary",
+    "copied": "Summary copied.",
+    "copyFail": "Copy failed. Select the text manually.",
+    "exportCsv": "Download CSV",
+    "chartTitle": "Remaining balance",
+    "chartNow": "With your payments",
+    "chartBase": "Without extra payments",
+    "scheduleTitle": "Repayment schedule",
+    "colNo": "No.",
+    "colDate": "Date",
+    "colPayment": "Payment",
+    "colExtra": "Extra",
+    "colPrincipal": "Principal",
+    "colInterest": "Interest",
+    "colBalance": "Balance",
+    "errAmount": "Enter a loan amount greater than zero.",
+    "errRate": "Enter an interest rate between 0 and 100.",
+    "errTerm": "Enter a term between 1 and 600 months (1 to 50 years).",
+    "errStart": "Enter a valid start date.",
+    "errNeg": "Extra payments and fees cannot be negative.",
+    "disclaimer": "Estimate only. Banks may use different day counts, rounding, insurance or fees. Confirm the final schedule with your lender.",
+    "privacy": "No account, no tracking, no upload. Only language, theme and currency are saved on this device.",
+    "source": "Source code",
+    "donate": "☕ Buy me a coffee?"
+  },
+  "ro": {
+    "title": "Calculator de credit și amortizare · TekiDeki",
+    "description": "Calculează rata lunară, dobânda totală, data ultimei plăți și planul complet de rambursare. Plăți suplimentare, comisioane, export CSV. Offline, privat, fără încărcări.",
+    "h1": "Calculator de credit și amortizare",
+    "subtitle": "Rată lunară, dobândă totală și plan complet de rambursare. Datele tale rămân în acest browser.",
+    "language": "Limbă",
+    "theme": "Schimbă tema luminoasă/întunecată",
+    "formTitle": "Detalii credit",
+    "amount": "Suma împrumutată",
+    "rate": "Dobânda anuală (%)",
+    "currency": "Monedă",
+    "term": "Durata creditului",
+    "termYears": "ani",
+    "termMonths": "luni",
+    "start": "Data de început",
+    "startHint": "Prima rată este scadentă la o lună după această dată.",
+    "extra": "Plată lunară suplimentară (opțional)",
+    "fee": "Comisioane unice (opțional)",
+    "reset": "Resetează",
+    "resultsTitle": "Rezultate",
+    "monthly": "Rata lunară",
+    "totalInterest": "Dobândă totală",
+    "totalPaid": "Total rambursat",
+    "totalCost": "Cost total (cu comisioane)",
+    "payoff": "Data ultimei plăți",
+    "payments": "Număr de rate",
+    "savedHead": "Economii cu plăți suplimentare",
+    "savedInterest": "{i} dobândă mai puțin",
+    "savedMonths": "cu {n} luni mai devreme",
+    "noSaving": "Adaugă o plată suplimentară ca să vezi economiile.",
+    "copy": "Copiază rezumatul",
+    "copied": "Rezumatul a fost copiat.",
+    "copyFail": "Copierea a eșuat. Selectează textul manual.",
+    "exportCsv": "Descarcă CSV",
+    "chartTitle": "Sold rămas",
+    "chartNow": "Cu plățile tale",
+    "chartBase": "Fără plăți suplimentare",
+    "scheduleTitle": "Plan de rambursare",
+    "colNo": "Nr.",
+    "colDate": "Data",
+    "colPayment": "Rată",
+    "colExtra": "Supliment",
+    "colPrincipal": "Principal",
+    "colInterest": "Dobândă",
+    "colBalance": "Sold",
+    "errAmount": "Introdu o sumă mai mare decât zero.",
+    "errRate": "Introdu o dobândă între 0 și 100.",
+    "errTerm": "Introdu o durată între 1 și 600 de luni (1 până la 50 de ani).",
+    "errStart": "Introdu o dată de început validă.",
+    "errNeg": "Plățile suplimentare și comisioanele nu pot fi negative.",
+    "disclaimer": "Doar o estimare. Băncile pot folosi alte metode de calcul, rotunjiri, asigurări sau comisioane. Confirmă planul final cu creditorul.",
+    "privacy": "Fără cont, fără urmărire, fără încărcare. Pe acest dispozitiv se salvează doar limba, tema și moneda.",
+    "source": "Cod sursă",
+    "donate": "☕ Merit o cafeluță?"
+  },
+  "sr-latn": {
+    "title": "Kalkulator kredita i amortizacije · TekiDeki",
+    "description": "Izračunajte mesečnu ratu, ukupnu kamatu, datum poslednje otplate i ceo plan otplate. Dodatne uplate, naknade, CSV izvoz. Radi offline, privatno, bez slanja podataka.",
+    "h1": "Kalkulator kredita i amortizacije",
+    "subtitle": "Mesečna rata, ukupna kamata i ceo plan otplate. Vaši podaci ostaju u ovom pregledaču.",
+    "language": "Jezik",
+    "theme": "Promeni svetlu/tamnu temu",
+    "formTitle": "Podaci o kreditu",
+    "amount": "Iznos kredita",
+    "rate": "Godišnja kamatna stopa (%)",
+    "currency": "Valuta",
+    "term": "Rok kredita",
+    "termYears": "godina",
+    "termMonths": "meseci",
+    "start": "Datum početka",
+    "startHint": "Prva rata dospeva mesec dana nakon ovog datuma.",
+    "extra": "Dodatna mesečna uplata (opciono)",
+    "fee": "Jednokratne naknade (opciono)",
+    "reset": "Poništi",
+    "resultsTitle": "Rezultati",
+    "monthly": "Mesečna rata",
+    "totalInterest": "Ukupna kamata",
+    "totalPaid": "Ukupno otplaćeno",
+    "totalCost": "Ukupan trošak (sa naknadama)",
+    "payoff": "Datum poslednje rate",
+    "payments": "Broj rata",
+    "savedHead": "Ušteda uz dodatne uplate",
+    "savedInterest": "{i} manje kamate",
+    "savedMonths": "{n} meseci ranije",
+    "noSaving": "Dodajte dodatnu uplatu da vidite uštedu.",
+    "copy": "Kopiraj sažetak",
+    "copied": "Sažetak je kopiran.",
+    "copyFail": "Kopiranje nije uspelo. Označite tekst ručno.",
+    "exportCsv": "Preuzmi CSV",
+    "chartTitle": "Preostali dug",
+    "chartNow": "Sa vašim uplatama",
+    "chartBase": "Bez dodatnih uplata",
+    "scheduleTitle": "Plan otplate",
+    "colNo": "Br.",
+    "colDate": "Datum",
+    "colPayment": "Rata",
+    "colExtra": "Dodatno",
+    "colPrincipal": "Glavnica",
+    "colInterest": "Kamata",
+    "colBalance": "Stanje",
+    "errAmount": "Unesite iznos veći od nule.",
+    "errRate": "Unesite kamatu između 0 i 100.",
+    "errTerm": "Unesite rok između 1 i 600 meseci (1 do 50 godina).",
+    "errStart": "Unesite ispravan datum početka.",
+    "errNeg": "Dodatne uplate i naknade ne mogu biti negativne.",
+    "disclaimer": "Samo procena. Banke mogu koristiti drugačije obračune, zaokruživanje, osiguranje ili naknade. Konačan plan potvrdite sa kreditorom.",
+    "privacy": "Bez naloga, bez praćenja, bez slanja. Na ovom uređaju se čuvaju samo jezik, tema i valuta.",
+    "source": "Izvorni kod",
+    "donate": "☕ Kafa za autora?"
+  },
+  "sr-cyrl": {
+    "title": "Калкулатор кредита и амортизације · TekiDeki",
+    "description": "Израчунајте месечну рату, укупну камату, датум последње отплате и цео план отплате. Додатне уплате, накнаде, CSV извоз. Ради офлајн, приватно, без слања података.",
+    "h1": "Калкулатор кредита и амортизације",
+    "subtitle": "Месечна рата, укупна камата и цео план отплате. Ваши подаци остају у овом прегледачу.",
+    "language": "Језик",
+    "theme": "Промени светлу/тамну тему",
+    "formTitle": "Подаци о кредиту",
+    "amount": "Износ кредита",
+    "rate": "Годишња каматна стопа (%)",
+    "currency": "Валута",
+    "term": "Рок кредита",
+    "termYears": "година",
+    "termMonths": "месеци",
+    "start": "Датум почетка",
+    "startHint": "Прва рата доспева месец дана након овог датума.",
+    "extra": "Додатна месечна уплата (опционо)",
+    "fee": "Једнократне накнаде (опционо)",
+    "reset": "Поништи",
+    "resultsTitle": "Резултати",
+    "monthly": "Месечна рата",
+    "totalInterest": "Укупна камата",
+    "totalPaid": "Укупно отплаћено",
+    "totalCost": "Укупан трошак (са накнадама)",
+    "payoff": "Датум последње рате",
+    "payments": "Број рата",
+    "savedHead": "Уштеда уз додатне уплате",
+    "savedInterest": "{i} мање камате",
+    "savedMonths": "{n} месеци раније",
+    "noSaving": "Додајте додатну уплату да видите уштеду.",
+    "copy": "Копирај сажетак",
+    "copied": "Сажетак је копиран.",
+    "copyFail": "Копирање није успело. Означите текст ручно.",
+    "exportCsv": "Преузми CSV",
+    "chartTitle": "Преостали дуг",
+    "chartNow": "Са вашим уплатама",
+    "chartBase": "Без додатних уплата",
+    "scheduleTitle": "План отплате",
+    "colNo": "Бр.",
+    "colDate": "Датум",
+    "colPayment": "Рата",
+    "colExtra": "Додатно",
+    "colPrincipal": "Главница",
+    "colInterest": "Камата",
+    "colBalance": "Стање",
+    "errAmount": "Унесите износ већи од нуле.",
+    "errRate": "Унесите камату између 0 и 100.",
+    "errTerm": "Унесите рок између 1 и 600 месеци (1 до 50 година).",
+    "errStart": "Унесите исправан датум почетка.",
+    "errNeg": "Додатне уплате и накнаде не могу бити негативне.",
+    "disclaimer": "Само процена. Банке могу користити другачије обрачуне, заокруживање, осигурање или накнаде. Коначан план потврдите са кредитором.",
+    "privacy": "Без налога, без праћења, без слања. На овом уређају се чувају само језик, тема и валута.",
+    "source": "Изворни код",
+    "donate": "☕ Кафа за аутора?"
+  }
+};
+
+/* CORE:BEGIN (pure calculation, no DOM; covered by tests/loan.test.cjs) */
+const toCents = v => Math.round(v * 100);
+function levelPaymentCents(principalCents, monthlyRate, n) {
+  if (monthlyRate === 0) return Math.ceil(principalCents / n);
+  const f = Math.pow(1 + monthlyRate, n);
+  return Math.round(principalCents * monthlyRate * f / (f - 1));
+}
+function addMonths(date, k) {
+  const target = new Date(date.getFullYear(), date.getMonth() + k, 1);
+  const last = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+  return new Date(target.getFullYear(), target.getMonth(), Math.min(date.getDate(), last));
+}
+/* Builds a month-by-month schedule in integer cents. Extra payments are applied after the regular payment. */
+function buildSchedule({ principal, annualRatePct, months, extra = 0 }) {
+  const P = toCents(principal);
+  const r = annualRatePct / 100 / 12;
+  const pay = levelPaymentCents(P, r, months);
+  const extraCents = toCents(extra);
+  const rows = [];
+  let balance = P, k = 0;
+  let totalPaid = 0, totalInterest = 0, totalExtra = 0;
+  while (balance > 0 && k < months) {
+    k++;
+    const interest = Math.round(balance * r);
+    let principalPart = Math.min(pay - interest, balance);
+    if (k === months) principalPart = balance;
+    const ex = Math.min(extraCents, balance - principalPart);
+    balance = balance - principalPart - ex;
+    const payment = principalPart + interest;
+    totalPaid += payment + ex;
+    totalInterest += interest;
+    totalExtra += ex;
+    rows.push({ n: k, payment, extra: ex, interest, principal: principalPart, balance });
+  }
+  return { paymentCents: pay, rows, count: rows.length, totalPaidCents: totalPaid, totalInterestCents: totalInterest, totalExtraCents: totalExtra };
+}
+/* CORE:END */
+
+const LOCALES = { en: 'en-GB', ro: 'ro-RO', 'sr-latn': 'sr-Latn-RS', 'sr-cyrl': 'sr-Cyrl-RS' };
+const BCP = { en: 'en', ro: 'ro', 'sr-latn': 'sr-Latn', 'sr-cyrl': 'sr-Cyrl' };
+const KEY = 'loan_preferences_v1';
+const DEFAULT_CURRENCY = { en: 'EUR', ro: 'RON', 'sr-latn': 'RSD', 'sr-cyrl': 'RSD' };
+const state = { lang: 'en', theme: 'light', currency: 'EUR' };
+const $ = id => document.getElementById(id);
+let lastSummary = null;
+let lastRows = [];
+
+const supported = lang => typeof lang === 'string' && Object.hasOwn(I18N, lang);
+function t(key, vars = {}) {
+  return (I18N[state.lang][key] || I18N.en[key] || key).replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? ''));
+}
+function money(valueMajor) {
+  return new Intl.NumberFormat(LOCALES[state.lang], { style: 'currency', currency: state.currency }).format(valueMajor);
+}
+function dateLong(date) {
+  return new Intl.DateTimeFormat(LOCALES[state.lang], { day: '2-digit', month: 'short', year: 'numeric' }).format(date);
+}
+function isoDate(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+function parseIsoDate(value) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || '');
+  if (!m) return null;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return d.getFullYear() === Number(m[1]) && d.getMonth() === Number(m[2]) - 1 ? d : null;
+}
+
+function applyI18n() {
+  document.documentElement.lang = BCP[state.lang];
+  document.title = t('title');
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  $('themeToggle').setAttribute('aria-label', t('theme'));
+  $('themeToggle').setAttribute('aria-pressed', String(state.theme === 'dark'));
+  $('themeToggle').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+  $('langSelect').value = state.lang;
+  $('canonical').href = 'https://tekideki.github.io/Loan-Calculator/' + (state.lang === 'en' ? '' : '?lang=' + BCP[state.lang]);
+  document.querySelector('meta[name="description"]').content = t('description');
+  document.querySelector('meta[property="og:title"]').content = t('title');
+  document.querySelector('meta[property="og:description"]').content = t('description');
+  $('ogLocale').content = LOCALES[state.lang].replace('-', '_');
+  document.querySelector('meta[name="twitter:description"]').content = t('description');
+  const schema = JSON.parse($('appSchema').textContent);
+  schema.description = t('description');
+  $('appSchema').textContent = JSON.stringify(schema);
+  if (lastSummary) render();
+}
+
+function readInputs() {
+  const errors = [];
+  const amount = Number($('amount').value);
+  const rate = Number($('rate').value);
+  const termValue = Number($('termValue').value);
+  const unit = $('termUnit').value;
+  const start = parseIsoDate($('start').value);
+  const extra = Number($('extra').value || 0);
+  const fee = Number($('fee').value || 0);
+  if (!(amount > 0) || amount > 1e12) errors.push('errAmount');
+  if (!(rate >= 0 && rate <= 100)) errors.push('errRate');
+  const months = unit === 'years' ? Math.round(termValue * 12) : Math.round(termValue);
+  if (!(termValue > 0) || months < 1 || months > 600) errors.push('errTerm');
+  if (!start) errors.push('errStart');
+  if (!(extra >= 0) || !(fee >= 0)) errors.push('errNeg');
+  return { errors, amount, rate, months, start, extra, fee };
+}
+
+function setStatus(message, isError = false) {
+  $('status').textContent = message;
+  $('status').classList.toggle('error', isError);
+}
+
+function recalc() {
+  const v = readInputs();
+  if (v.errors.length) {
+    $('formError').textContent = t(v.errors[0]);
+    lastSummary = null; lastRows = [];
+    clearResults();
+    return;
+  }
+  $('formError').textContent = '';
+  const base = buildSchedule({ principal: v.amount, annualRatePct: v.rate, months: v.months, extra: 0 });
+  const now = buildSchedule({ principal: v.amount, annualRatePct: v.rate, months: v.months, extra: v.extra });
+  const payoff = addMonths(v.start, now.count);
+  lastSummary = {
+    principal: v.amount,
+    monthly: base.paymentCents / 100,
+    interest: now.totalInterestCents / 100,
+    paid: now.totalPaidCents / 100,
+    fee: v.fee,
+    cost: now.totalPaidCents / 100 + v.fee,
+    payoff,
+    count: now.count,
+    savedInterest: (base.totalInterestCents - now.totalInterestCents) / 100,
+    savedMonths: base.count - now.count,
+    extra: v.extra,
+    baseRows: base.rows,
+    nowRows: now.rows,
+    start: v.start
+  };
+  lastRows = now.rows;
+  render();
+}
+
+function clearResults() {
+  ['outMonthly', 'outInterest', 'outPaid', 'outCost', 'outPayoff', 'outCount'].forEach(id => { $(id).textContent = '–'; });
+  $('outSaving').textContent = t('noSaving');
+  $('scheduleBody').replaceChildren();
+  $('lineNow').setAttribute('points', '');
+  $('lineBase').setAttribute('points', '');
+  $('chartMax').textContent = '';
+  $('chartEnd').textContent = '';
+}
+
+function render() {
+  const s = lastSummary;
+  if (!s) return;
+  $('outMonthly').textContent = money(s.monthly);
+  $('outInterest').textContent = money(s.interest);
+  $('outPaid').textContent = money(s.paid);
+  $('outCost').textContent = money(s.cost);
+  $('outPayoff').textContent = dateLong(s.payoff);
+  $('outCount').textContent = new Intl.NumberFormat(LOCALES[state.lang]).format(s.count);
+  if (s.extra > 0 && s.savedMonths !== undefined) {
+    const parts = [];
+    if (s.savedInterest > 0) parts.push(t('savedInterest', { i: money(s.savedInterest) }));
+    if (s.savedMonths > 0) parts.push(t('savedMonths', { n: s.savedMonths }));
+    $('outSaving').textContent = parts.length ? t('savedHead') + ': ' + parts.join(', ') + '.' : t('noSaving');
+  } else {
+    $('outSaving').textContent = t('noSaving');
+  }
+  drawChart(s);
+  renderTable(s);
+}
+
+function drawChart(s) {
+  const W = 582, H = 200, X0 = 48, Y0 = 10;
+  const total = s.principal;
+  const toPoints = rows => {
+    const pts = [`${X0},${Y0}`];  // starts at the full principal
+    const longest = Math.max(s.baseRows.length, s.nowRows.length, 1);
+    rows.forEach((row, i) => {
+      const x = X0 + ((i + 1) / longest) * W;
+      const y = Y0 + H - (row.balance / 100 / total) * H;
+      pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+    });
+    return pts.join(' ');
+  };
+  $('lineBase').setAttribute('points', s.extra > 0 ? toPoints(s.baseRows) : '');
+  $('lineNow').setAttribute('points', toPoints(s.nowRows));
+  $('chartMax').textContent = money(total);
+  $('chartEnd').textContent = `${new Intl.NumberFormat(LOCALES[state.lang]).format(s.count)} / ${new Intl.NumberFormat(LOCALES[state.lang]).format(s.baseRows.length)}`;
+}
+
+function renderTable(s) {
+  const body = $('scheduleBody');
+  const frag = document.createDocumentFragment();
+  const nf = new Intl.NumberFormat(LOCALES[state.lang], { style: 'currency', currency: state.currency });
+  s.nowRows.forEach(row => {
+    const tr = document.createElement('tr');
+    const date = addMonths(s.start, row.n);
+    const cells = [
+      String(row.n),
+      dateLong(date),
+      nf.format(row.payment / 100),
+      row.extra ? nf.format(row.extra / 100) : '–',
+      nf.format(row.principal / 100),
+      nf.format(row.interest / 100),
+      nf.format(row.balance / 100)
+    ];
+    cells.forEach(text => { const td = document.createElement('td'); td.textContent = text; tr.appendChild(td); });
+    frag.appendChild(tr);
+  });
+  body.replaceChildren(frag);
+}
+
+function csvEscape(value) {
+  const s = String(value);
+  return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadCsv() {
+  if (!lastSummary) return;
+  const header = ['No', 'Date', 'Payment', 'Extra', 'Principal', 'Interest', 'Balance'];
+  const lines = [header.join(',')];
+  lastSummary.nowRows.forEach(row => {
+    const date = addMonths(lastSummary.start, row.n);
+    lines.push([row.n, isoDate(date), (row.payment / 100).toFixed(2), (row.extra / 100).toFixed(2), (row.principal / 100).toFixed(2), (row.interest / 100).toFixed(2), (row.balance / 100).toFixed(2)].map(csvEscape).join(','));
+  });
+  const blob = new Blob([lines.join('\n') + '\n'], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'loan-schedule.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function copySummary() {
+  if (!lastSummary) return;
+  const s = lastSummary;
+  const text = [
+    `${t('monthly')}: ${money(s.monthly)}`,
+    `${t('totalInterest')}: ${money(s.interest)}`,
+    `${t('totalPaid')}: ${money(s.paid)}`,
+    `${t('totalCost')}: ${money(s.cost)}`,
+    `${t('payoff')}: ${dateLong(s.payoff)}`,
+    `${t('payments')}: ${s.count}`
+  ].join('\n');
+  try {
+    await navigator.clipboard.writeText(text);
+    setStatus(t('copied'));
+  } catch (_) {
+    setStatus(t('copyFail'), true);
+  }
+}
+
+function resetForm() {
+  $('amount').value = 100000;
+  $('rate').value = 6;
+  $('termValue').value = 30;
+  $('termUnit').value = 'years';
+  $('extra').value = 0;
+  $('fee').value = 0;
+  $('start').value = isoDate(new Date());
+  $('currency').value = DEFAULT_CURRENCY[state.lang];
+  state.currency = $('currency').value;
+  savePrefs();
+  recalc();
+}
+
+function savePrefs() {
+  try { localStorage.setItem(KEY, JSON.stringify({ lang: state.lang, theme: state.theme, currency: state.currency })); } catch (_) {}
+}
+function setTheme(value) {
+  state.theme = value === 'dark' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = state.theme;
+  $('themeColor').content = state.theme === 'dark' ? '#0d1920' : '#f4f8f7';
+  $('themeToggle').setAttribute('aria-pressed', String(state.theme === 'dark'));
+  $('themeToggle').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+  savePrefs();
+}
+function setLang(value) {
+  if (!supported(value)) return;
+  state.lang = value;
+  $('currency').value = state.currency;
+  applyI18n();
+  recalc();
+  savePrefs();
+}
+
+function init() {
+  let saved;
+  try { saved = JSON.parse(localStorage.getItem(KEY)); } catch (_) {}
+  const browser = (navigator.language || 'en').toLowerCase();
+  const detected = browser.startsWith('sr') ? (browser.includes('cyrl') ? 'sr-cyrl' : 'sr-latn') : browser.split('-')[0];
+  const requested = new URLSearchParams(location.search).get('lang')?.toLowerCase();
+  state.lang = supported(requested) ? requested : (saved && supported(saved.lang)) ? saved.lang : supported(detected) ? detected : 'en';
+  state.theme = (saved && (saved.theme === 'dark' || saved.theme === 'light')) ? saved.theme : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  state.currency = (saved && ['RSD', 'RON', 'EUR', 'USD'].includes(saved.currency)) ? saved.currency : DEFAULT_CURRENCY[state.lang];
+
+  $('currency').value = state.currency;
+  $('start').value = isoDate(new Date());
+  setTheme(state.theme);
+  applyI18n();
+
+  $('langSelect').addEventListener('change', e => setLang(e.target.value));
+  $('themeToggle').addEventListener('click', () => setTheme(state.theme === 'dark' ? 'light' : 'dark'));
+  ['amount', 'rate', 'termValue', 'termUnit', 'start', 'extra', 'fee'].forEach(id => $(id).addEventListener('input', recalc));
+  $('termUnit').addEventListener('change', recalc);
+  $('currency').addEventListener('change', e => { state.currency = e.target.value; savePrefs(); recalc(); });
+  $('resetBtn').addEventListener('click', resetForm);
+  $('copyBtn').addEventListener('click', copySummary);
+  $('csvBtn').addEventListener('click', downloadCsv);
+  recalc();
+}
+init();
+</script>
+</body>
+</html>
