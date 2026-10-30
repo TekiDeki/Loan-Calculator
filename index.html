@@ -85,6 +85,13 @@ td:first-child,th:first-child,td:nth-child(2),th:nth-child(2){text-align:left}
 .status.error{color:var(--danger)}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media print{header .controls,.actions,.foot{display:none}.card{box-shadow:none}}
+
+
+
+  /* regula casei: tinte de atingere pe mobil */
+  @media (pointer: coarse), (max-width: 700px) {
+    a { padding-block: 9px; }
+  }
 </style>
 </head>
 <body>
