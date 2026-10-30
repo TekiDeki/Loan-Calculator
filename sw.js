@@ -3,7 +3,7 @@
  * Private app-scoped offline shell. Stores only the app's own static files. */
 'use strict';
 const PREFIX = 'tekideki-loan-';
-const CACHE = PREFIX + 'v1';
+const CACHE = PREFIX + 'v2';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './LICENSE'];
 
 self.addEventListener('install', event => {
