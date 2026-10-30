@@ -106,6 +106,9 @@ td:first-child,th:first-child,td:nth-child(2),th:nth-child(2){text-align:left}
   /* panourile si cardurile se largestesc la cat incape */
   .panel, .card, .sheet, .action, .action-main, .action-side, .source-panel, .panel-heading { min-width: 0; max-width: 100%; }
   .chips, #cityChips { flex-wrap: wrap; }
+  /* un card care cere doua coloane (span 2) isi croieste singur o coloana in plus cand
+     grila a coborat la una singura, si pagina se lateste. 1 / -1 il tine pe toata latimea. */
+  .metric.hero { grid-column: 1 / -1; }
 }
 </style>
 </head>
